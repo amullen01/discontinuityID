@@ -48,8 +48,6 @@ def clusterNormals(normals, k):
     labels = kmeans.labels_
     return labels
 
-
-
 #generates texture coordinate array based on k value and output.png texture map
 #input: k value
 #output: texcoord array
@@ -103,19 +101,7 @@ def kmeansDot(normals, k, iterations, n_operations):
 
             #calculate means
             for j in range(0,k):
-                # mean_x = numpy.mean([w[0] for w in data_clustered[j]])
-                # mean_y = numpy.mean([w[1] for w in data_clustered[j]])
-                # mean_z = numpy.mean([w[2] for w in data_clustered[j]])
                 means[j]=[data_clustered[j][0]/data_clustered[j][3], data_clustered[j][1]/data_clustered[j][3], data_clustered[j][2]/data_clustered[j][3]]
-            # check tolerance
-            # diff = 0
-            # for p in range(0, k):
-            #     diff+=angleBetweenVectors(numpy.array(means[p]), centroids[p])
-            # if diff==0:
-            #     print "converged on iteration ", it
-            #     break
-            # print centroids
-            # print means
             centroids = means
         tolerance = .36
         dist = 0
@@ -126,11 +112,14 @@ def kmeansDot(normals, k, iterations, n_operations):
         dist = dist / float(len(normals))
 
         print 'operation number ', run+1 , ' had an average error of ', dist
+
         if dist<tolerance:
             return labels
+
         if dist<minDist:
             minDist=dist
             best_labels=labels
+
     return best_labels
 
 #shell function
