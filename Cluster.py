@@ -6,6 +6,7 @@ import optimize
 import plot
 
 path = "res/Tile_+005_+001.xml"
+#path = "res/cube.xml"
 
 opt = raw_input("find optimal k value using sum of squared errors? (y/n)")
 if opt == "y":
