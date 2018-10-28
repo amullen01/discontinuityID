@@ -4,19 +4,30 @@ import processDAE
 import processOBJ
 import optimize
 import plot
+import numpy
 
-path = "res/Tile_+005_+001.xml"
-#path = "res/cube.xml"
+#path = "res/Tile_+005_+001.xml"
+path = "res/cube.xml"
 
-opt = raw_input("find optimal k value using sum of squared errors? (y/n)")
-if opt == "y":
-    optimize.run_optimization(path)
+
+print "processing data"
+data = processDAE.processTiles('res/inputCollada/')
+print len(data['triangleMap']), " triangles"
 
 k=int(input("K value?"))
+print "kmeans clustering"
+clusters = kmeans.kmeansDot(data['normals'], k, 6, 3)
 
-triangles = processDAE.getTriangles(path)
-clusters = kmeans.runProcessing(triangles, k)
-mesh = plot.plt(path, clusters)
+print "plotting"
+mesh = plot.plt(data['vertices'], data['triangleMap'], clusters)
+
+# vertices = processDAE.getVertices(path)
+# triangles = processDAE.getTriangles(path)
+# triangleMap = processDAE.getTriangleMap(path)
+# clusters = kmeans.runProcessing(triangles, k)
+# print len(triangleMap)
+# print len(vertices)
+# mesh = plot.plt(vertices, triangleMap, clusters)
 #texcoords = kmeans.getTextureCoords(k)
 #processDAE.reWriteTexCoords(path, texcoords, clusters)
 
