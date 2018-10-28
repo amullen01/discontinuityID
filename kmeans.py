@@ -111,7 +111,7 @@ def kmeansDot(normals, k, iterations, n_operations):
 
         dist = dist / float(len(normals))
 
-        print 'operation number ', run+1 , ' had an average error of ', dist
+        print 'operation number ', run+1 , ' had an average error of ', dist/(math.pi/360), ' degrees'
 
         if dist<tolerance:
             return labels

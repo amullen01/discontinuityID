@@ -1,4 +1,6 @@
 from xml.etree import ElementTree as ET
+import kmeans
+import numpy
 
 #retrieves texture coordinate array from DAE file
 #input: path to xml file in DAE format
@@ -83,4 +85,38 @@ def reWriteTexCoords(input, newTexcoords, clusters):
             returnText += str(arr_Triangles[x]) + " "
     triangles.text = returnText[:-1]
     triangles.set('updated', 'yes')
-    xml.write('res/output.dae')
+    xml.write('res/outputCollada/output.dae')
+
+def processTiles(inputDirectory):
+    dict = {'normals':[],'vertices':[], 'triangleMap':[]}
+
+    mapOffset = 0
+
+    for x in range(0,10):
+        file = inputDirectory+'Tile_'+str(x+1)+'.dae'
+
+        for normal in kmeans.computeNormals(getTriangles(file)):
+            dict['normals'].append(normal)
+
+        for vertex in getVertices(file):
+            dict['vertices'].append(vertex )
+
+        for map in getTriangleMap(file):
+            mapping = numpy.array(map)
+            dict['triangleMap'].append(mapping+mapOffset)
+        mapOffset=(len(dict['vertices']))
+
+    return dict
+
+def getTriangleMap(path):
+    xml = ET.parse(path)
+    root = xml.getroot()
+    tri = root.find(
+        "{http://www.collada.org/2005/11/COLLADASchema}library_geometries/{http://www.collada.org/2005/11/COLLADASchema}geometry/{http://www.collada.org/2005/11/COLLADASchema}mesh/{http://www.collada.org/2005/11/COLLADASchema}triangles/{http://www.collada.org/2005/11/COLLADASchema}p")
+    arr_TrianglesTemp = [int(i) for i in str.split(tri.text)]
+    arr_Triangles = []
+    for j in range(0, len(arr_TrianglesTemp)):
+        if j % 2 == 0:
+            arr_Triangles.append(arr_TrianglesTemp[j])
+    triangleMap = [arr_Triangles[i:i + 3] for i in range(0, len(arr_Triangles), 3)]
+    return triangleMap
