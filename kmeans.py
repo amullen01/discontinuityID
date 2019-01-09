@@ -114,13 +114,13 @@ def kmeansDot(normals, k, iterations, n_operations):
         print 'operation number ', run+1 , ' had an average error of ', dist/(math.pi/360), ' degrees'
 
         if dist<tolerance:
-            return labels
+            return {"all_labels":labels,"centers":centroids}
 
         if dist<minDist:
             minDist=dist
             best_labels=labels
 
-    return best_labels
+    return {"all_labels":best_labels,"centers":centroids}
 
 #shell function
 def runProcessing(triangles, k):

@@ -1,0 +1,22 @@
+import ModelClass
+import kmeans_new
+import unittest
+
+m = ModelClass.Model('res_new')
+normals = m.normals
+kmeans = kmeans_new.Kmeans(normals, 100,5)
+kmeans.run_kmeans()
+
+# class MyTests(unittest.TestCase):
+#
+#
+#     def test_choose_initial_centroids(self):
+#         test_data = [[1,2,4],[5,4,6],[3,2,0],[9,6,3],[9,9,9], [10,11,12]]
+#         kmeans = kmeans_new.Kmeans(test_data, 4, 3)
+#
+#         centroids = kmeans.choose_initial_centroids()
+#         print centroids
+#         self.assertIsNotNone(centroids)
+#
+# if __name__ == "__main__":
+#     unittest.main()
