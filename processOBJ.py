@@ -20,10 +20,10 @@ def data_extractor(filepath):
     for line in enumerate(open(filepath)):
         if line[1][0] + line[1][1]=='v ':
             v=re.search(vertexPattern, line[1])
-            vertices.append([v.group('x'), v.group('y'), v.group('z')])
+            vertices.append([float(v.group('x')), float(v.group('y')), float(v.group('z'))])
         elif line[1][0] + line[1][1]=='f ':
             f=re.search(facePattern,line[1])
-            faces.append([f.group('v1'), f.group('v2'), f.group('v3')])
+            faces.append([int(f.group('v1')), int(f.group('v2')), int(f.group('v3'))])
 
     return [vertices, faces]
 
@@ -35,17 +35,29 @@ def data_extractor(filepath):
 #output: list of triangular faces with their vertices in (x,y,z)
 def getTriangles(filepath):
 
-    modelAttributes = data_extractor(filepath)
 
-    vertices = modelAttributes[0]
-    faces = modelAttributes[1]
-    faces_Coordinated = []
+    vertices = []
+    faces = []
+    xyz = []
+
+    vertexPattern = re.compile('v (?P<x>[-.+e\d]+) (?P<y>[-.+e\d]+) (?P<z>[-.+e\d]+)')
+    facePattern = re.compile('f (?P<v1>\d+)\/.*?(?P<v2>\d+)\/.*?(?P<v3>\d+)\/.*')
+
+    for line in enumerate(open(filepath)):
+        if line[1][0] + line[1][1] == 'v ':
+            v = re.search(vertexPattern, line[1])
+            vertices.append([float(v.group('x')), float(v.group('y')), float(v.group('z'))])
+        elif line[1][0] + line[1][1] == 'f ':
+            f = re.search(facePattern, line[1])
+            faces.append([int(f.group('v1')), int(f.group('v2')), int(f.group('v3'))])
+
+
     for face in faces:
-        p1 = [float(vertices[int(face[0])-1][0]), float(vertices[int(face[0])-1][1]), float(vertices[int(face[0])-1][2])]
-        p2 = [float(vertices[int(face[1])-1][0]), float(vertices[int(face[1])-1][1]), float(vertices[int(face[1])-1][2])]
-        p3 = [float(vertices[int(face[2])-1][0]), float(vertices[int(face[2])-1][1]), float(vertices[int(face[2])-1][2])]
-        faces_Coordinated.append([p1,p2,p3])
-    return faces_Coordinated
+        p1 = [vertices[face[0]-1][0], vertices[face[0]-1][1], vertices[face[0]-1][2]]
+        p2 = [vertices[face[1]-1][0], vertices[face[1]-1][1], vertices[face[1]-1][2]]
+        p3 = [vertices[face[2]-1][0], vertices[face[2]-1][1], vertices[face[2]-1][2]]
+        xyz.append([p1,p2,p3])
+    return [xyz, vertices, faces]
 
 
 

@@ -1,0 +1,12 @@
+import ModelClass
+import kmeans_new
+import unittest
+import plot
+
+m = ModelClass.Model('res_new')
+normals = m.normals
+kmeans = kmeans_new.Kmeans(normals, 100,8)
+kmeans.run_kmeans()
+
+mesh = plot.colored_model(m.vertices, m.faces, kmeans.get_labels())
+plot.plot_stereonet(m.normals, kmeans.get_clustering_centers())
