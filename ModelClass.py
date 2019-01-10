@@ -7,26 +7,32 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 import mplstereonet
+import operator
 
 class Model:
 
     directory_path = ''
-    triangles = []
+    xyz = []
     normals = []
     poles = []
+    vertices = []
+    faces = []
 
 
     def __init__(self, model_dir_path):
+
         print "processing .obj data"
         self.directory_path = model_dir_path
 
+        mapOffset = -1
         for filename in os.listdir(self.directory_path):
-            self.triangles += processOBJ.getTriangles(model_dir_path+"/"+filename)
+            model_data = processOBJ.getTriangles(self.directory_path+"/"+filename)
+            self.xyz += model_data[0]
+            self.vertices += model_data[1]
+            self.faces += [np.array(face)+mapOffset for face in model_data[2]]
+            mapOffset = len(self.vertices)-1
 
-        self.normals = self.computeNormals(self.triangles)
-
-        for normal in self.normals:
-            self.poles += mplstereonet.normal2pole(normal[0], normal[1], normal[2])
+        self.normals = self.computeNormals(self.xyz)
 
 
     def computeNormals(self, triangles):

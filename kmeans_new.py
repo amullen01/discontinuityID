@@ -10,6 +10,8 @@ class Kmeans:
     max_iterations = 0
     k=0
     runs = 5
+    final_centers = None
+    final_labels = None
 
     def __init__(self, data, max_iterations, k):
         self.clustering_data = data
@@ -22,7 +24,7 @@ class Kmeans:
         print "seeding initial centroids"
 
         centroids = self.choose_initial_centroids()
-        print centroids
+
         k=self.k
         iterations = 0
         oldCentroids = None
@@ -42,8 +44,10 @@ class Kmeans:
             # Assign centroids based on datapoint labels
             centroids = self.update_centroids(dataSet, labels, k)
 
+        self.final_centers = centroids
+        self.final_labels = labels
 
-        return {'cluster_centers':centroids,'labels':labels}
+        return
 
 
 
@@ -118,4 +122,8 @@ class Kmeans:
                 return idx
         assert (False)
 
+    def get_clustering_centers(self):
+        return self.final_centers
 
+    def get_labels(self):
+        return self.final_labels
