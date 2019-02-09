@@ -12,51 +12,63 @@ class Kmeans:
     runs = 5
     final_centers = None
     final_labels = None
+    tolerance = 3
+    ssd = 100000000
+    data_clustered = []
 
-    def __init__(self, data, max_iterations, k):
+
+    def __init__(self, data, max_iterations, k, tolerance, runs):
         self.clustering_data = data
         self.max_iterations = max_iterations
         self.k = k
+        self.tolerance = tolerance
+        self.runs = runs
 
 
 
     def run_kmeans(self):
-        print "seeding initial centroids"
+        for run in range(0, self.runs):
+            print "seeding initial centroids"
 
-        centroids = self.choose_initial_centroids()
+            centroids = self.choose_initial_centroids()
 
-        k=self.k
-        iterations = 0
-        oldCentroids = None
-        labels = None
-        dataSet = self.clustering_data
+            k=self.k
+            iterations = 0
+            oldCentroids = None
+            labels = None
+            dataSet = self.clustering_data
 
-        print "running kmeans"
-        # Run the main k-means algorithm
-        while not self.shouldStop(oldCentroids, centroids, iterations):
-            # Save old centroids for convergence test. Book keeping.
-            oldCentroids = centroids
-            iterations += 1
+            print "running kmeans"
+            # Run the main k-means algorithm
+            while not self.shouldStop(oldCentroids, centroids, iterations):
+                # Save old centroids for convergence test. Book keeping.
+                oldCentroids = centroids
+                iterations += 1
 
-            # Assign labels to each datapoint based on centroids
-            labels = [self.get_closest_centroid(centroids, x) for x in dataSet]
+                # Assign labels to each datapoint based on centroids
+                labels = [self.get_closest_centroid(centroids, x) for x in dataSet]
 
-            # Assign centroids based on datapoint labels
-            centroids = self.update_centroids(dataSet, labels, k)
+                # Assign centroids based on datapoint labels
+                centroids = self.update_centroids(dataSet, labels, k)
+            self.return_best(self.data_clustered, centroids, labels)
 
-        self.final_centers = centroids
-        self.final_labels = labels
-
+            print "run ", run+1, " converged in", iterations, "iterations"
         return
-
-
+    def return_best(self, data_clustered, centroids, labels):
+        new_ssd = 0
+        for d in data_clustered:
+            new_ssd += np.std(d)
+        if new_ssd<self.ssd:
+            self.final_centers = centroids
+            self.final_labels = labels
+            self.ssd = new_ssd
 
     def update_centroids(self, dataset, labels, k):
 
         arr = [[] for i in range(0,k)]
         for j in range(len(labels)):
             arr[labels[j]].append(dataset[j])
-
+        self.data_clustered = arr
         for a in range(0,k):
             arr[a] = np.mean(arr[a], axis = 0)
         return arr
@@ -80,7 +92,7 @@ class Kmeans:
             return True
         angles = [self.angleBetweenVectors(oldCentroids[x],centroids[x]) for x in range(len(centroids))]
 
-        return np.mean(np.degrees(angles)) < 1
+        return np.mean(np.degrees(angles)) < self.tolerance
 
 
 

@@ -29,13 +29,16 @@ def colored_model(vertices, triangleMap, clusters):
 
 
 def plot_stereonet(normals, cluster_centers):
+
     print "plotting stereonet"
     numpy.seterr(divide='ignore', invalid='ignore')
+
     print "plotting cluster centers"
     plunge, bearing = get_trend_plunge(normals)
     cc_plunge, cc_bearing = get_trend_plunge(cluster_centers)
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='stereonet')
+
     print "contouring"
     ax.density_contourf(plunge, bearing, measurement='lines', cmap = 'Reds')
     #kamb, schmidt
